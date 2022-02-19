@@ -1,0 +1,5 @@
+{
+  "prettier.tabWidth": 4,
+  "auto-close-tag.insertSpaceBeforeSelfClosingTag": true,
+  "emmet.triggerExpansionOnTab": true
+}
