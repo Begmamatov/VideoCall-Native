@@ -1,10 +1,21 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, FlatList, StyleSheet, TextInput} from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  TextInput,
+  Pressable,
+  Alert,
+} from 'react-native';
+import {useNavigation} from '@react-navigation/core';
 import dummyContacts from '../../../assets/data/contacts.json';
 
 export default function ContactsScreen() {
   const [searchTerm, setSerachTerm] = useState('');
   const [filteredContacts, setFilteredContact] = useState(dummyContacts);
+
+  const navigation = useNavigation();
 
   useEffect(() => {
     const newContacts = dummyContacts.filter(contact =>
@@ -14,6 +25,10 @@ export default function ContactsScreen() {
     );
     setFilteredContact(newContacts);
   }, [searchTerm]);
+
+  const callUser = user => {
+    navigation.navigate('Calling', {user});
+  };
 
   return (
     <View style={styles.page}>
@@ -26,7 +41,9 @@ export default function ContactsScreen() {
       <FlatList
         data={filteredContacts}
         renderItem={({item}) => (
-          <Text style={styles.contactName}>{item.user_display_name}</Text>
+          <Pressable onPress={() => callUser(item)}>
+            <Text style={styles.contactName}>{item.user_display_name}</Text>
+          </Pressable>
         )}
         ItemSeparatorComponent={() => <View style={styles.separator}></View>}
       />
@@ -36,7 +53,9 @@ export default function ContactsScreen() {
 
 const styles = StyleSheet.create({
   page: {
+    flex: 1,
     padding: 15,
+    backgroundColor: 'white',
   },
   contactName: {
     fontSize: 16,

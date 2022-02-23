@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
   StatusBar,
@@ -16,19 +16,16 @@ import {
   View,
 } from 'react-native';
 
-import ContactsScreen from './src/screens/ContactsScreen';
-import CallingScreen from './src/screens/CallingScreen';
+import Navigation from './src/navigation';
 
 function App() {
   return (
-    <SafeAreaView>
-      <StatusBar />
+    <>
+      <StatusBar backgroundColor={'black'} />
 
-      <CallingScreen />
-    </SafeAreaView>
+      <Navigation />
+    </>
   );
 }
-
-const styles = StyleSheet.create({});
 
 export default App;

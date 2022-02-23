@@ -1,28 +1,44 @@
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Pressable, Alert} from 'react-native';
 import React from 'react';
+import CallActionBox from '../../components/CallActionBox';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {useNavigation, useRoute} from '@react-navigation/core';
 
 const CallingScreen = () => {
+  const navigation = useNavigation();
+  const route = useRoute();
+
+  const user = route?.params?.user;
+
+  const goBack = () => {
+    navigation.pop();
+  };
+
   return (
     <View style={styles.page}>
+      <Pressable onPress={goBack} style={styles.backButton}>
+        <Ionicons name="chevron-back" color={'white'} size={30} />
+      </Pressable>
       <View style={styles.cameraPreview}>
-        <Text style={styles.name}>Alex</Text>
-        <Text style={styles.phoneNumber}>ringing +99899 310 37 63</Text>
-
-        <View style={styles.buttonsContainer}>
-          <Ionicons name="camera-reverse" />
-        </View>
+        <Text style={styles.name}>{user?.user_display_name}</Text>
+        <Text style={styles.phoneNumber}>+99899 445 42 35</Text>
       </View>
+
+      <CallActionBox />
     </View>
   );
 };
 const styles = StyleSheet.create({
   page: {
-    backgroundColor: 'red',
     height: '100%',
+    backgroundColor: '#7b4e88',
+  },
+  backButton: {
+    position: 'absolute',
+    top: 20,
+    left: 10,
   },
   cameraPreview: {
-    backgroundColor: '#7b4e88',
     flex: 1,
     alignItems: 'center',
     paddingTop: 10,
@@ -38,12 +54,6 @@ const styles = StyleSheet.create({
   phoneNumber: {
     fontSize: 20,
     color: 'white',
-  },
-  buttonsContainer: {
-    backgroundColor: '#333333',
-    padding: 10,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
   },
 });
 
