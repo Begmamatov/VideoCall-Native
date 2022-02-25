@@ -9,25 +9,45 @@ import {
   StatusBar,
   SafeAreaView,
 } from 'react-native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import bg from '../../../assets/images/ios.png';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
+import {useRoute, useNavigation} from '@react-navigation/native';
+import {Voximplant} from 'react-native-voximplant';
 
 const IncomingCallScreen = () => {
+  const [caller, setCaller] = useState('');
+  const route = useRoute();
+  const navigation = useNavigation();
+  const {call} = route.params;
+
+  useEffect(() => {
+    setCaller(call.getEndpoints()[0].displayName);
+
+    call.on(Voximplant.ClientEvents.Disconnected, callEvent => {
+      navigation.navigate('Contacts');
+    });
+
+    return () => {
+      call.off(Voximplant.ClientEvents.Disconnected);
+    };
+  }, []);
+
   const onDecline = () => {
-    Alert.alert('On Declione', 'Bosma eeee');
+    call.decline();
+    navigation.navigate('Contacts');
   };
 
   const onAccept = () => {
-    console.log('on Decline');
+    navigation.navigate('Calling', {call, isIncomingCall: true});
   };
 
   return (
     <View style={styles.root}>
       <ImageBackground source={bg} style={styles.bg} resizeMode="cover">
-        <Text style={styles.name}>Diyor Bula</Text>
+        <Text style={styles.name}>{caller}</Text>
         <Text style={styles.phoneNumber}>+99899 445 42 35</Text>
 
         <View style={[styles.row, {marginTop: 'auto'}]}>

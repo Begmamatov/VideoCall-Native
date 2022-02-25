@@ -1,11 +1,57 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, TextInput, Pressable} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  Pressable,
+  Alert,
+} from 'react-native';
+import {Voximplant} from 'react-native-voximplant';
+import {APP_NAME, ACC_NAME} from '../../Constants';
+import {useNavigation} from '@react-navigation/core';
 
 const LoginScreen = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const signIn = () => {};
+  const voximplant = Voximplant.getInstance();
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const connect = async () => {
+      const status = await voximplant.getClientState();
+      if (status === Voximplant.ClientState.DISCONNECTED) {
+        await voximplant.connect();
+      } else if (status === Voximplant.ClientState.LOGGED_IN) {
+        redirectHome();
+      }
+    };
+
+    connect();
+  }, []);
+
+  const signIn = async () => {
+    try {
+      const fqUsername = `${username}@${APP_NAME}.${ACC_NAME}.voximplant.com`;
+      await voximplant.login(fqUsername, password);
+
+      redirectHome();
+    } catch (e) {
+      Alert.alert(e.name, `Error code: ${e.code}`);
+    }
+  };
+
+  const redirectHome = () => {
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: 'Contacts',
+        },
+      ],
+    });
+  };
 
   return (
     <View style={styles.page}>
@@ -15,6 +61,7 @@ const LoginScreen = () => {
         placeholder="Username"
         style={styles.input}
         autoCapitalize="none"
+        placeholderTextColor={'#999'}
       />
       <TextInput
         value={password}
@@ -22,6 +69,7 @@ const LoginScreen = () => {
         placeholder="Password"
         style={styles.input}
         secureTextEntry
+        placeholderTextColor={'#999'}
       />
 
       <Pressable style={styles.button} onPress={signIn}>
@@ -50,6 +98,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginVertical: 10,
     borderRadius: 5,
+    color: 'black',
   },
 });
 

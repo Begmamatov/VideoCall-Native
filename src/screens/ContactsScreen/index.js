@@ -9,6 +9,7 @@ import {
   Alert,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/core';
+import {Voximplant} from 'react-native-voximplant';
 import dummyContacts from '../../../assets/data/contacts.json';
 
 export default function ContactsScreen() {
@@ -16,6 +17,17 @@ export default function ContactsScreen() {
   const [filteredContacts, setFilteredContact] = useState(dummyContacts);
 
   const navigation = useNavigation();
+  const voximplant = Voximplant.getInstance();
+
+  useEffect(() => {
+    voximplant.on(Voximplant.ClientEvents.IncomingCall, incomingCallEvent => {
+      navigation.navigate('IncomingCall', {call: incomingCallEvent.call});
+    });
+
+    return () => {
+      voximplant.off(Voximplant.ClientEvents.IncomingCall);
+    };
+  });
 
   useEffect(() => {
     const newContacts = dummyContacts.filter(contact =>
@@ -37,6 +49,7 @@ export default function ContactsScreen() {
         onChangeText={setSerachTerm}
         style={styles.searchInput}
         placeholder="Search..."
+        placeholderTextColor={'#999'}
       />
       <FlatList
         data={filteredContacts}
@@ -60,6 +73,7 @@ const styles = StyleSheet.create({
   contactName: {
     fontSize: 16,
     marginVertical: 10,
+    color: '#666',
   },
   separator: {
     width: '100%',
@@ -70,5 +84,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
     padding: 10,
     borderRadius: 5,
+    color: 'black',
   },
 });
